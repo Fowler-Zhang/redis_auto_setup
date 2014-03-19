@@ -96,28 +96,28 @@ def get_supervisor_server():
     return xmlrpclib.Server('http://' + ip + ':9001/RPC2')
 
 
-def is_supervisor_process_exist(server, group_name):
+def is_supervisor_process_exist_and_running(server, group_name):
     processes = server.supervisor.getAllProcessInfo()
     process_names = set()
     for process in processes:
         process_names.add(process['name'])
-    return group_name in process_names
+    if group_name in process_names:
+        group_info = server.supervisor.getProcessInfo(group_name)
+        if 0 != int(group_info['pid']):
+            return True
 
 
-def run(port, master='', max_memory='0', max_memory_policy='volatile-lru'):
+def run(port, max_memory='0', max_memory_policy='volatile-lru', master=''):
     redis_conf = "/home/server/redis/etc/redis_" + port + ".conf"
     super_conf = "/home/server/supervisor/etc/redis_" + port + ".supervisor"
     group_name = 'redis_' + port
     server = get_supervisor_server()
-
     if os.path.isfile(redis_conf):
         return redis_conf + " is exist on " + socket.getfqdn(socket.gethostname())
     elif os.path.isfile(super_conf):
         return super_conf + " is exist on " + socket.getfqdn(socket.gethostname())
-    elif is_supervisor_process_exist(server, group_name):
-        group_info = server.supervisor.getProcessInfo(group_name)
-        if 0 != int(group_info['pid']):
-            return group_name + ' is running on ' + socket.getfqdn(socket.gethostname())
+    elif is_supervisor_process_exist_and_running(server, group_name):
+        return group_name + ' is running on ' + socket.getfqdn(socket.gethostname())
     else:
         generate_node_conf(redis_conf, port, master, max_memory, max_memory_policy)
         generate_super_config(super_conf, port)
