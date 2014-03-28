@@ -77,6 +77,13 @@ def active_supervisor_group(_server, _group_name):
             return 'Active cluster supervisor error: %s' % detail
 
 
+def stop_supervisor(_server):
+    try:
+        result = _server.supervisor.shutdown()
+    except socket.error as detail:
+        return 'Stop supervisor error: %s' % detail
+
+
 if "__main__" == __name__:
     server = get_supervisor_server()
     if OPERATION_START == sys.argv[1]:
