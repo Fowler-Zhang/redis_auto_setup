@@ -80,6 +80,7 @@ def active_supervisor_group(_server, _group_name):
 def stop_supervisor(_server):
     try:
         result = _server.supervisor.shutdown()
+        return 'Supervisor is stopped successfully.'
     except socket.error as detail:
         return 'Stop supervisor error: %s' % detail
 
