@@ -2,7 +2,7 @@ __author__ = 'fowler'
 import socket
 import xmlrpclib
 import sys
-import os
+import json
 
 OPERATION_START = 'start'
 OPERATION_STOP = 'stop'
@@ -90,16 +90,16 @@ def stop_supervisor(_server):
 if "__main__" == __name__:
     server = get_supervisor_server()
     if OPERATION_START == sys.argv[1]:
-        print start_supervisor_group(server, sys.argv[2])
+        print json.dumps(start_supervisor_group(server, sys.argv[2]))
     elif OPERATION_STOP == sys.argv[1]:
-        print stop_supervisor_group(server, sys.argv[2])
+        print json.dumps(stop_supervisor_group(server, sys.argv[2]))
     elif OPERATION_ACTIVE == sys.argv[1]:
-        print active_supervisor_group(server, sys.argv[2])
+        print json.dumps(active_supervisor_group(server, sys.argv[2]))
     elif OPERATION_REMOVE == sys.argv[1]:
-        print remove_supervisor_group(server, sys.argv[2])
+        print json.dumps(remove_supervisor_group(server, sys.argv[2]))
     elif OPERATION_LOAD_GROUP == sys.argv[1]:
-        print get_all_supervisor_groups(server)
+        print json.dumps(get_all_supervisor_groups(server))
     elif OPERATION_SHUTDOWN == sys.argv[1]:
-        print stop_supervisor(server)
+        print json.dumps(stop_supervisor(server))
     else:
         print 'Not supported operation.'
