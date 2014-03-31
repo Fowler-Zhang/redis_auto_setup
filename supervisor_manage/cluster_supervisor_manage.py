@@ -23,7 +23,7 @@ def get_supervisor_server():
     return xmlrpclib.Server('http://' + ip + ':9001/RPC2')
 
 
-def start_cluster_supervisor(_server, _group_name):
+def start_supervisor_group(_server, _group_name):
     try:
         _server.supervisor.startProcessGroup(_group_name)
         return 'Supervisor group %s is started successfully.' % _group_name
@@ -31,7 +31,7 @@ def start_cluster_supervisor(_server, _group_name):
         return 'Start supervisor group failed: %s' % detail
 
 
-def stop_cluster_supervisor(_server, _group_name):
+def stop_supervisor_group(_server, _group_name):
     try:
         _server.supervisor.stopProcessGroup(_group_name)
         return 'Supervisor group %s is stopped successfully.' % _group_name
@@ -39,7 +39,7 @@ def stop_cluster_supervisor(_server, _group_name):
         return 'Stop supervisor group failed: %s' % detail
 
 
-def remove_cluster_supervisor(_server, _group_name):
+def remove_supervisor_group(_server, _group_name):
     try:
         _server.supervisor.removeProcessGroup(_group_name)
         return 'Supervisor group %s is removed successfully.' % _group_name
@@ -90,14 +90,16 @@ def stop_supervisor(_server):
 if "__main__" == __name__:
     server = get_supervisor_server()
     if OPERATION_START == sys.argv[1]:
-        print start_cluster_supervisor(server, sys.argv[2])
+        print start_supervisor_group(server, sys.argv[2])
     elif OPERATION_STOP == sys.argv[1]:
-        print stop_cluster_supervisor(server, sys.argv[2])
+        print stop_supervisor_group(server, sys.argv[2])
     elif OPERATION_ACTIVE == sys.argv[1]:
         print active_supervisor_group(server, sys.argv[2])
     elif OPERATION_REMOVE == sys.argv[1]:
-        print remove_cluster_supervisor(server, sys.argv[2])
+        print remove_supervisor_group(server, sys.argv[2])
     elif OPERATION_LOAD_GROUP == sys.argv[1]:
         print get_all_supervisor_groups(server)
+    elif OPERATION_SHUTDOWN == sys.argv[1]:
+        print stop_supervisor(server)
     else:
         print 'Not supported operation.'
