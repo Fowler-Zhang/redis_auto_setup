@@ -2,12 +2,14 @@ __author__ = 'fowler'
 import socket
 import xmlrpclib
 import sys
+import os
 
 OPERATION_START = 'start'
 OPERATION_STOP = 'stop'
 OPERATION_LOAD_GROUP = 'load_g'
 OPERATION_ACTIVE = 'active'
 OPERATION_REMOVE = 'remove'
+OPERATION_SHUTDOWN = 'shutdown'
 
 STATUS_OK = 0
 STATUS_NEW = 1
@@ -24,25 +26,25 @@ def get_supervisor_server():
 def start_cluster_supervisor(_server, _group_name):
     try:
         _server.supervisor.startProcessGroup(_group_name)
-        return 'Start cluster %s supervisor success.' % _group_name
+        return 'Supervisor group %s is started successfully.' % _group_name
     except xmlrpclib.Fault as detail:
-        return 'Start cluster supervisor error: %s' % detail
+        return 'Start supervisor group failed: %s' % detail
 
 
 def stop_cluster_supervisor(_server, _group_name):
     try:
         _server.supervisor.stopProcessGroup(_group_name)
-        return 'Stop cluster %s supervisor success.' % _group_name
+        return 'Supervisor group %s is stopped successfully.' % _group_name
     except xmlrpclib.Fault as detail:
-        return 'Stop cluster supervisor error: %s' % detail
+        return 'Stop supervisor group failed: %s' % detail
 
 
 def remove_cluster_supervisor(_server, _group_name):
     try:
         _server.supervisor.removeProcessGroup(_group_name)
-        return 'Remove cluster %s supervisor success.' % _group_name
+        return 'Supervisor group %s is removed successfully.' % _group_name
     except xmlrpclib.Fault as detail:
-        return 'Remove cluster supervisor error: %s' % detail
+        return 'Remove supervisor group failed: %s' % detail
 
 
 def get_all_supervisor_groups(_server):
@@ -72,17 +74,17 @@ def active_supervisor_group(_server, _group_name):
     else:
         try:
             _server.supervisor.addProcessGroup(_group_name)
-            return 'Active cluster %s supervisor success.' % _group_name
+            return 'Supervisor group %s is activated successfully.' % _group_name
         except xmlrpclib.Fault as detail:
-            return 'Active cluster supervisor error: %s' % detail
+            return 'Active supervisor group failed: %s' % detail
 
 
 def stop_supervisor(_server):
     try:
-        result = _server.supervisor.shutdown()
+        _server.supervisor.shutdown()
         return 'Supervisor is stopped successfully.'
     except socket.error as detail:
-        return 'Stop supervisor error: %s' % detail
+        return 'Stop supervisor failed: %s' % detail
 
 
 if "__main__" == __name__:
