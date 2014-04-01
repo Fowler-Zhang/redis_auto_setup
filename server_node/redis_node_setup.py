@@ -3,6 +3,7 @@ import ConfigParser
 import sys
 import socket
 import xmlrpclib
+import json
 
 REDIS_TEMPLATE = """
 daemonize no
@@ -129,6 +130,6 @@ def run(port, max_memory='0', max_memory_policy='volatile-lru', master=''):
 
 if '__main__' == __name__:
     if 1 > len(sys.argv):
-        print "redis port is required. parameter sequence is: port master maxmemory maxmemory-policy"
+        print json.dumps("redis port is required. parameter sequence is: port master maxmemory maxmemory-policy")
         exit(1)
-    print run(*sys.argv[1:])
+    print json.dumps(run(*sys.argv[1:]))

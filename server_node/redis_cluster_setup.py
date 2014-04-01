@@ -3,6 +3,7 @@ import sys
 import ConfigParser
 import socket
 import xmlrpclib
+import json
 
 REDIS_TEMPLATE = """daemonize no
 pidfile /home/server/redis/log/redis_%(port)s.pid
@@ -180,6 +181,6 @@ def run(cluster_type, start, end, prefix, max_memory='0', max_memory_policy='vol
 
 if '__main__' == __name__:
     if 4 > len(sys.argv):
-        print "redis port is required. parameter sequence is: port master maxmemory maxmemory-policy"
+        print json.dumps("redis port is required. parameter sequence is: port master maxmemory maxmemory-policy")
         exit(1)
-    print run(*sys.argv[1:])
+    print json.dumps(run(*sys.argv[1:]))
