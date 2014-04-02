@@ -38,7 +38,7 @@ def start_supervisor_instance(_server, _group_name, _instance):
     try:
         process = _group_name + ':' + _instance
         _server.supervisor.startProcess(process)
-        return 'Supervisor process %s is started successfully.' % process
+        return 'Supervisor instance %s is started successfully.' % process
     except xmlrpclib.Fault as detail:
         return 'Start supervisor instance failed: %s' % detail
 
@@ -55,7 +55,7 @@ def stop_supervisor_instance(_server, _group_name, _instance):
     try:
         process = _group_name + ':' + _instance
         _server.supervisor.stopProcess(process)
-        return 'Supervisor process %s is stopped successfully.' % process
+        return 'Supervisor instance %s is stopped successfully.' % process
     except xmlrpclib.Fault as detail:
         return 'Stop supervisor instance failed: %s' % detail
 
