@@ -4,9 +4,12 @@ import xmlrpclib
 import sys
 import json
 
-OPERATION_START = 'start'
-OPERATION_STOP = 'stop'
+OPERATION_START_GROUP = 'start_g'
+OPERATION_STOP_GROUP = 'stop_g'
 OPERATION_LOAD_GROUP = 'load_g'
+OPERATION_START_INSTANCE = 'start_i'
+OPERATION_STOP_INSTANCE = 'stop_i'
+OPERATION_LOAD_INSTANCE = 'load_i'
 OPERATION_ACTIVE = 'active'
 OPERATION_REMOVE = 'remove'
 OPERATION_SHUTDOWN = 'shutdown'
@@ -31,12 +34,30 @@ def start_supervisor_group(_server, _group_name):
         return 'Start supervisor group failed: %s' % detail
 
 
+def start_supervisor_instance(_server, _group_name, _instance):
+    try:
+        process = _group_name + ':' + _instance
+        _server.supervisor.startProcess(process)
+        return 'Supervisor process %s is started successfully.' % process
+    except xmlrpclib.Fault as detail:
+        return 'Start supervisor instance failed: %s' % detail
+
+
 def stop_supervisor_group(_server, _group_name):
     try:
         _server.supervisor.stopProcessGroup(_group_name)
         return 'Supervisor group %s is stopped successfully.' % _group_name
     except xmlrpclib.Fault as detail:
         return 'Stop supervisor group failed: %s' % detail
+
+
+def stop_supervisor_instance(_server, _group_name, _instance):
+    try:
+        process = _group_name + ':' + _instance
+        _server.supervisor.stopProcess(process)
+        return 'Supervisor process %s is stopped successfully.' % process
+    except xmlrpclib.Fault as detail:
+        return 'Stop supervisor instance failed: %s' % detail
 
 
 def remove_supervisor_group(_server, _group_name):
@@ -65,6 +86,16 @@ def get_all_supervisor_groups(_server):
     return result
 
 
+def get_all_supervisor_instances(_server):
+    processes = _server.supervisor.getAllProcessInfo()
+    result = []
+    for process in processes:
+        item = {'group': process['group'], 'name': process['name'], 'description': process['description'],
+                'statename': process['statename']}
+        result.append(item)
+    return json.dumps(result)
+
+
 def active_supervisor_group(_server, _group_name):
     result = _server.supervisor.reloadConfig()
     if 0 == len(result[0][0]):
@@ -89,17 +120,23 @@ def stop_supervisor(_server):
 
 if "__main__" == __name__:
     server = get_supervisor_server()
-    if OPERATION_START == sys.argv[1]:
+    if OPERATION_START_GROUP == sys.argv[1]:
         print json.dumps(start_supervisor_group(server, sys.argv[2]))
-    elif OPERATION_STOP == sys.argv[1]:
+    elif OPERATION_START_INSTANCE == sys.argv[1]:
+        print json.dumps(start_supervisor_instance(server, sys.argv[2]), sys.argv[3])
+    elif OPERATION_STOP_GROUP == sys.argv[1]:
         print json.dumps(stop_supervisor_group(server, sys.argv[2]))
+    elif OPERATION_STOP_INSTANCE == sys.argv[1]:
+        print json.dumps(stop_supervisor_instance(server, sys.argv[2]), sys.argv[3])
     elif OPERATION_ACTIVE == sys.argv[1]:
         print json.dumps(active_supervisor_group(server, sys.argv[2]))
     elif OPERATION_REMOVE == sys.argv[1]:
         print json.dumps(remove_supervisor_group(server, sys.argv[2]))
     elif OPERATION_LOAD_GROUP == sys.argv[1]:
         print json.dumps(get_all_supervisor_groups(server))
+    elif OPERATION_LOAD_INSTANCE == sys.argv[1]:
+        print json.dumps(get_all_supervisor_instances(server))
     elif OPERATION_SHUTDOWN == sys.argv[1]:
         print json.dumps(stop_supervisor(server))
     else:
-        print 'Not supported operation.'
+        print json.dumps('Not supported operation.')
