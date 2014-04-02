@@ -123,11 +123,11 @@ if "__main__" == __name__:
     if OPERATION_START_GROUP == sys.argv[1]:
         print json.dumps(start_supervisor_group(server, sys.argv[2]))
     elif OPERATION_START_INSTANCE == sys.argv[1]:
-        print json.dumps(start_supervisor_instance(server, sys.argv[2]), sys.argv[3])
+        print json.dumps(start_supervisor_instance(server, sys.argv[2], sys.argv[3]))
     elif OPERATION_STOP_GROUP == sys.argv[1]:
         print json.dumps(stop_supervisor_group(server, sys.argv[2]))
     elif OPERATION_STOP_INSTANCE == sys.argv[1]:
-        print json.dumps(stop_supervisor_instance(server, sys.argv[2]), sys.argv[3])
+        print json.dumps(stop_supervisor_instance(server, sys.argv[2], sys.argv[3]))
     elif OPERATION_ACTIVE == sys.argv[1]:
         print json.dumps(active_supervisor_group(server, sys.argv[2]))
     elif OPERATION_REMOVE == sys.argv[1]:
