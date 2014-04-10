@@ -45,12 +45,13 @@ def find_relationship(master_host, master_port, _result={}):
     handler = redis.StrictRedis(master_host, master_port)
     info = handler.info()
     connected_slaves = info['connected_slaves']
-    if 0 == connected_slaves and ROLE_MASTER == info['role']:
-        # master only, no slave
+    if ROLE_MASTER == info['role']:
         key = '%s:%s' % (master_host, master_port)
         _result[key] = 'master'
-        return _result
-    elif 0 == connected_slaves and ROLE_MASTER != info['role']:
+        if 0 == connected_slaves:
+            return _result
+
+    if 0 == connected_slaves and ROLE_MASTER != info['role']:
         # recursion end
         return
     else:
