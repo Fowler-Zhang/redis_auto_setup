@@ -1,6 +1,7 @@
 import redis
 import subprocess
 import sys
+import json
 
 ROLE_MASTER = 'master'
 ROLE_SLAVE = 'slave'
@@ -84,14 +85,17 @@ def find_master(_host, _port, _master_list):
 
 
 if '__main__' == __name__:
+    if 3 != len(sys.argv):
+        print json.dumps({'error': 'The usage should be:python master_slave host port'})
+        exit(0)
     host = sys.argv[1]
     port = int(sys.argv[2])
     master_list = []
     master_info = find_master(host, port, master_list)
     master_host_port = master_list[len(master_list) - 1]
     if 'error' == master_host_port[0]:
-        print master_host_port[1]
+        print json.dumps({'error': str(master_list)})
     else:
         result = {}
         find_relationship(master_host_port[0], master_host_port[1], result)
-        print result
+        print json.dumps(result)
